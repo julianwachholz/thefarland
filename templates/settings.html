@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}thefar.land | settings{% endblock %}
+
+{% block side %}
+  <ul class="side-nav">
+    <li>
+      <a href="{% url 'accounts:user_update' %}">My account</a>
+    </li>
+    <li>
+      <a href="{#% url 'settings:settings_update' %#}">Settings</a>
+    </li>
+  </ul>
+{% endblock %}

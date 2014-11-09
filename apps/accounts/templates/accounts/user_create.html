@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load formulation %}
+
+{% block content %}
+
+  <h2>Register</h2>
+
+  {% form 'forms/foundation.html' form %}
+  <form method="post">
+    {% csrf_token %}
+
+    {% field form.username %}
+    {% field form.password %}
+
+    {% url 'accounts:login' as login %}
+    {% use 'Submit' label='Register' secondary='Login instead' secondary_url=login %}
+  </form>
+  {% endform %}
+
+{% endblock %}

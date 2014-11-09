@@ -1,0 +1,27 @@
+{% extends 'settings.html' %}
+{% load formulation %}
+
+{% block content %}
+
+  <h2>My account</h2>
+
+  {% form 'forms/foundation.html' form %}
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="row">
+      <div class="small-offset-3 small-9 columns">
+      {% if user.is_verified %}
+        <p>You must verify your username again if you change it.</p>
+      {% endif %}
+      </div>
+    </div>
+
+    {% field form.username %}
+
+    {% url 'accounts:password_change' as url %}
+    {% use 'Submit' label='Update' secondary='Change password' secondary_url=url %}
+  </form>
+  {% endform %}
+
+{% endblock %}

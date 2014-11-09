@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load formulation %}
+
+{% block content %}
+
+  <h2>Login</h2>
+
+  {% form 'forms/foundation.html' form %}
+  <form method="post">
+    {% csrf_token %}
+    {% use 'NonFieldErrors' %}
+
+    {% field form.username %}
+    {% field form.password %}
+
+    {% url 'accounts:user_create' as register %}
+    {% use 'Submit' label='Login' secondary='Register instead' secondary_url=register %}
+  </form>
+  {% endform %}
+
+{% endblock %}

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  {% load static %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{% block title %}The Farland – Vanilla Minecraft Server{% endblock %}</title>
+  <meta name="description" content="Pure vanilla Minecraft Survival Multiplayer Server with twisted terrain. A challenge for experienced players looking for a new adventure.">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:700,300">
+  <link rel="stylesheet" href="{% static 'bower_components/normalize.css/normalize.css' %}">
+  <link rel="stylesheet" href="{% static 'bower_components/foundation/css/foundation.css' %}">
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  {% block extrahead %}{% endblock %}
+</head>
+<body>
+
+{% block main %}
+
+  <div class="row">
+    <div class="small-4 columns">
+      <h1>
+        <a href="{% url 'index' %}">The Farland</a>
+      </h1>
+    </div>
+    <div class="small-8 columns">
+      <div class="sub-nav user-nav">
+        {% if user.is_authenticated %}
+          <img src="{{ user.get_avatar_url }}" width="48" height="48" class="user-avatar">
+          Hello, {{ user.get_short_name }}<br>
+          <a href="{% url 'accounts:user_update' %}">My account</a>
+          <a class="user-logout" href="{% url 'accounts:logout' %}">Logout</a>
+        {% else %}
+          Hello, Anonymous<br>
+          <a href="{% url 'accounts:login' %}">Login</a>
+          <a href="{% url 'accounts:user_create' %}">Register</a>
+        {% endif %}
+        <div class="clear"></div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-12 columns">
+      {% for message in messages %}
+        <div class="alert-box {{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+
+      {% block content %}
+        <p>Hello, world!</p>
+      {% endblock %}
+    </div>
+  </div>
+
+{% endblock %}
+
+</body>
+</html>

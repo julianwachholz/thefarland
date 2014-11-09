@@ -1,0 +1,37 @@
+{% extends 'settings.html' %}
+{% load formulation %}
+
+{% block content %}
+
+  <h2>Verify Minecraft username</h2>
+
+  {% form 'forms/foundation.html' form %}
+  <form method="post">
+    {% csrf_token %}
+
+    <div id="verification-step-1">
+      <div class="row">
+        <div class="small-3 columns">
+          <label class="right">Minecraft username:</label>
+        </div>
+        <div class="small-9 columns">
+          {{ user.username }} (<a href="{% url 'accounts:user_update' %}">change</a>)
+        </div>
+      </div>
+      <div class="row">
+        <div class="small-push-3 small-9 columns">
+          <p>Login to thefar.land Minecraft server using your username above.</p>
+          <button class="small button">Send verification code now</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="verification-step-2">
+      {% field form.verification_code %}
+    </div>
+
+    {% use 'Submit' label='Continue' %}
+  </form>
+  {% endform %}
+
+{% endblock %}
