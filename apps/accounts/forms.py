@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from utils.forms import KwargsPopMixin
 
 
 User = get_user_model()
@@ -32,29 +33,32 @@ class UserCreateForm(UserForm):
         return user
 
 
-class UserUpdateForm(UserForm):
+class UserUpdateForm(KwargsPopMixin, UserForm):
     """
     Update user details.
 
     """
     class Meta:
         model = User
-        fields = UserForm.Meta.fields + (
+        fields = (
             'username',
         )
 
+    def save(self, commit=True):
+        if self.cleaned_data['username'] != self.initial['username']:
+            self.user.is_verified = False
+        if commit:
+            self.user.save()
+        return self.user
 
-class PasswordChangeForm(forms.Form):
+
+class PasswordChangeForm(KwargsPopMixin, forms.Form):
     """
     Let a user change their password.
 
     """
     current_password = forms.CharField(label='Current password', widget=forms.PasswordInput)
     new_password = forms.CharField(label='New password')
-
-    def __init__(self, user, *args, **kwargs):
-        self.user = user
-        super(PasswordChangeForm, self).__init__(*args, **kwargs)
 
     def clean_current_password(self):
         """
@@ -71,9 +75,19 @@ class PasswordChangeForm(forms.Form):
         return self.user
 
 
-class VerifyMinecraftUsernameForm(forms.Form):
+class VerifyMinecraftUsernameForm(KwargsPopMixin, forms.Form):
     """
     Verify the username via a Minecraft server.
 
     """
     verification_code = forms.CharField(label='Verification Code')
+
+    def clean_verification_code(self):
+        if self.user.verification_code != self.cleaned_data['verification_code']:
+            raise forms.ValidationError('Verification code is invalid.')
+        return self.cleaned_data['verification_code']
+
+    def save(self):
+        self.user.is_verified = True
+        self.user.verification_code = ''
+        self.user.save()

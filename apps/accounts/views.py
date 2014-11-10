@@ -3,9 +3,13 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from vanilla import CreateView, UpdateView, FormView, TemplateView
+
+from apps.minecraft.tasks import minecraft_cmd
 from utils.views import UserFormKwargsMixin, SuccessMessageMixin
+
 from .forms import UserCreateForm, UserUpdateForm, PasswordChangeForm, VerifyMinecraftUsernameForm
 
 
@@ -40,7 +44,7 @@ class UserCreateView(SuccessMessageMixin, CreateView):
 
         """
         form.save()
-        user = authenticate(username=form.cleaned_data['email'],
+        user = authenticate(username=form.cleaned_data['username'],
                             password=form.cleaned_data['password'])
         login(self.request, user)
         return super(UserCreateView, self).form_valid(form)
@@ -48,7 +52,7 @@ class UserCreateView(SuccessMessageMixin, CreateView):
 user_create = UserCreateView.as_view()
 
 
-class UserUpdateView(SuccessMessageMixin, UpdateView):
+class UserUpdateView(UserFormKwargsMixin, SuccessMessageMixin, UpdateView):
     """
     Update user details.
 
@@ -83,7 +87,7 @@ class PasswordChangeView(UserFormKwargsMixin, SuccessMessageMixin, FormView):
 password_change = login_required(PasswordChangeView.as_view())
 
 
-class VerifyFormView(FormView):
+class VerifyFormView(UserFormKwargsMixin, SuccessMessageMixin, FormView):
     """
     Verify the username via a Minecraft server.
 
@@ -91,4 +95,27 @@ class VerifyFormView(FormView):
     form_class = VerifyMinecraftUsernameForm
     template_name = 'accounts/verify.html'
 
+    success_url = reverse_lazy('index')
+    success_message = 'Your username has been verified.'
+
+    def form_valid(self, form):
+        form.save()
+        return super(VerifyFormView, self).form_valid(form)
+
 verify = VerifyFormView.as_view()
+
+
+def get_verify_token(request):
+    """
+    Send verification token to minecraft user.
+
+    """
+    if request.method == 'POST':
+        username = request.user.username
+        code = request.user.verification_code
+
+        command = 'tellraw %s {text:"Your verification code: %s",bold:true,color:dark_green}' % (username, code)
+        minecraft_cmd.delay(command)
+
+        return JsonResponse({'status': 'OK'})
+    return JsonResponse({'status': 'FAIL'})

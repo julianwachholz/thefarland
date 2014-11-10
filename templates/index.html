@@ -2,7 +2,7 @@
 
 {% block content %}
 
-  {% if not user.is_verified %}
+  {% if not user.is_anonymous and not user.is_verified %}
     <div class="alert-box warning">
       You haven't verified your username yet. You can participate in raffles and vote with your verified user account!
       <a class="tiny secondary button" href="{% url 'accounts:verify' %}">Verify now!</a>

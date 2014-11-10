@@ -40,11 +40,11 @@ class User(PermissionsMixin, AbstractBaseUser):
     def __str__(self):
         return self.username
 
-    def save(self):
+    def save(self, **kwargs):
         if not self.is_verified and not self.verification_code:
             from random import randint
             self.verification_code = randint(100000, 999999)  # random 6-digit code
-        return super(User, self).save()
+        return super(User, self).save(**kwargs)
 
     def get_full_name(self):
         return self.username

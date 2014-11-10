@@ -28,7 +28,7 @@
       <div class="sub-nav user-nav">
         {% if user.is_authenticated %}
           <img src="{{ user.get_avatar_url }}" width="48" height="48" class="user-avatar">
-          Hello, {{ user.get_short_name }}<br>
+          <div class="user-name">Hello, {{ user.get_short_name }}</div>
           <a href="{% url 'accounts:user_update' %}">My account</a>
           <a class="user-logout" href="{% url 'accounts:logout' %}">Logout</a>
         {% else %}
@@ -53,6 +53,8 @@
   </div>
 
 {% endblock %}
+
+<script src="{% static 'script.js' %}"></script>
 
 </body>
 </html>

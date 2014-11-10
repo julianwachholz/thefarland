@@ -21,16 +21,24 @@
       <div class="row">
         <div class="small-push-3 small-9 columns">
           <p>Login to thefar.land Minecraft server using your username above.</p>
-          <button class="small button">Send verification code now</button>
+          <p>Clicking the button below will send you a 6-digit code in the game.</p>
+          <button class="small button" id="send-verification"
+                  data-url="{% url 'accounts:get_verify_token' %}" data-csrf="{{ csrf_token }}">
+            Send verification code now
+          </button>
         </div>
       </div>
     </div>
 
-    <div id="verification-step-2">
+    <div id="verification-step-2" class="{% if not form.errors %}hidden{% endif %}">
+      <div class="row">
+        <div class="small-push-3 small-9 columns">
+          <p>We sent a verification code to {{ user.username }} on thefar.land Minecraft server.</p>
+        </div>
+      </div>
       {% field form.verification_code %}
+      {% use 'Submit' label='Continue' %}
     </div>
-
-    {% use 'Submit' label='Continue' %}
   </form>
   {% endform %}
 

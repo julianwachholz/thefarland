@@ -85,6 +85,9 @@ CACHES = {
     'default': dj_config_url.cache_config(),
 }
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -138,9 +141,21 @@ MEDIA_URL = '/media/'
 
 
 # Celery configuration
+from kombu import Exchange, Queue
 BROKER_URL = get_env_setting('BROKER_URL')
 CELERY_RESULT_BACKEND = BROKER_URL
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_TASK_RESULT_EXPIRES = 3600
+CELERY_DEFAULT_QUEUE = 'default'
+CELERY_QUEUES = [
+    Queue('default', Exchange('default'), routing_key='default'),
+    Queue('minecraft', Exchange('minecraft'), routing_key='minecraft'),
+]
+CELERY_ROUTES = {
+    'apps.minecraft.tasks.minecraft_cmd': {
+        'queue': 'minecraft',
+        'routing_key': 'minecraft',
+    },
+}

@@ -1,11 +1,17 @@
+import subprocess
+
 from thefarland.celery import app as celery_app
 from apps.accounts.models import User
 
 
 @celery_app.task(ignore_result=True)
-def verification_code(user_id):
+def minecraft_cmd(command):
     """
-    Tell a user their verification code via Minecraft.
+    Run a minecraft console command.
 
     """
-    user = User.objects.get(id=user_id)
+    args = [
+        'screen', '-p', '0', '-S', 'minecraft',
+        '-X', 'stuff', '{cmd}\r'.format(command),
+    ]
+    subprocess.call(args)
