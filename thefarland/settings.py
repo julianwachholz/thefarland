@@ -38,6 +38,15 @@ ALLOWED_HOSTS = [
     'test.thefar.land',
 ]
 
+SECURE_PROXY_SSL_HEADER = ('SERVER_PROTOCOL', 'https')
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+
+
 # Application definition
 
 INSTALLED_APPS = (
