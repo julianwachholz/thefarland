@@ -19,6 +19,7 @@ class WebOperator(models.Model):
         verbose_name_plural = 'Web Operators'
         ordering = ['user']
         permissions = [
+            ('is_op', "Can access WebOp panel."),
             ('gamemode_spectator', "User can change to spectator mode."),
             ('player_kick', "Can kick players."),
             ('player_ban', "Can ban players."),

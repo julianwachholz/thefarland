@@ -9,7 +9,7 @@
     </div>
   {% endif %}
 
-  {% if perms.minecraft %}
+  {% if perms.minecraft.is_op %}
     <div class="alert-box secondary">
       <a href="{% url 'minecraft:webop' %}">Click here to go to the WebOp control panel.</a>
     </div>

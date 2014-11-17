@@ -6,7 +6,7 @@ from .models import WebOperator
 
 
 webop = TemplateView.as_view(template_name='minecraft/webop.html')
-webop = permission_required('minecraft')(webop)
+webop = permission_required('minecraft.is_op')(webop)
 
 spectator = TemplateView.as_view(template_name='minecraft/spectator.html')
 spectator = permission_required('minecraft.gamemode_spectator')(spectator)
