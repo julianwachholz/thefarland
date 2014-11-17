@@ -26,4 +26,5 @@ def minecraft_cmd_return(command):
     args = [
         '/usr/bin/minecraft', 'cmd', '{}'.format(command),
     ]
-    return subprocess.check_output(args)
+    output = subprocess.check_output(args)
+    return output.decode('utf-8')
