@@ -7,7 +7,7 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from vanilla import CreateView, UpdateView, FormView, TemplateView
 
-from apps.minecraft.tasks import minecraft_cmd
+from apps.minecraft.commands import send_verification_code
 from utils.views import UserFormKwargsMixin, SuccessMessageMixin
 
 from .forms import UserCreateForm, UserUpdateForm, PasswordChangeForm, VerifyMinecraftUsernameForm
@@ -111,11 +111,9 @@ def get_verify_token(request):
 
     """
     if request.method == 'POST':
-        username = request.user.username
-        code = request.user.verification_code
-
-        command = 'tellraw %s {text:"Your verification code: %s",bold:true,color:dark_green}' % (username, code)
-        minecraft_cmd.delay(command)
-
+        send_verification_code(
+            username=request.user.username,
+            code=request.user.verification_code
+        )
         return JsonResponse({'status': 'OK'})
     return JsonResponse({'status': 'FAIL'})

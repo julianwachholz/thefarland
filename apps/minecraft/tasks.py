@@ -12,6 +12,18 @@ def minecraft_cmd(command):
     """
     args = [
         'screen', '-p', '0', '-S', 'minecraft',
-        '-X', 'stuff', '{cmd}\r'.format(command),
+        '-X', 'stuff', '{}\r'.format(command),
     ]
     subprocess.call(args)
+
+
+@celery_app.task
+def minecraft_cmd_return(command):
+    """
+    Run a minecraft console command.
+
+    """
+    args = [
+        '/usr/bin/minecraft', 'cmd', '{}'.format(command),
+    ]
+    return subprocess.check_output(args)

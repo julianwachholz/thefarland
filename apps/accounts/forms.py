@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from apps.minecraft.commands import team_add_registered
 from utils.forms import KwargsPopMixin
 
 
@@ -88,6 +89,7 @@ class VerifyMinecraftUsernameForm(KwargsPopMixin, forms.Form):
         return self.cleaned_data['verification_code']
 
     def save(self):
+        team_add_registered(self.user.username)
         self.user.is_verified = True
         self.user.verification_code = ''
         self.user.save()

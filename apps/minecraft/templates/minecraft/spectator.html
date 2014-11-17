@@ -1,0 +1,9 @@
+{% extends 'minecraft/webop.html' %}
+
+{% block webop_panel %}
+
+<button id="query-coords" class="small button"
+    data-url="{% url 'minecraft:get_coords' %}" data-csrf="{{ csrf_token }}">Get my coordinates</button>
+<div id="my-coords"></div>
+
+{% endblock %}

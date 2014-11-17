@@ -22,11 +22,13 @@ class User(PermissionsMixin, AbstractBaseUser):
     Simple user with username (should be Minecraft username).
 
     """
-    username = models.CharField(max_length=200, unique=True)
+    username = models.CharField('Minecraft username', max_length=200, unique=True)
     is_staff = models.BooleanField(default=False)
 
     is_verified = models.BooleanField(default=False)
     verification_code = models.CharField(max_length=10, blank=True)
+
+    is_trusted = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     AVATAR_URL = 'https://minotar.net/avatar/{user}/{size}.png'

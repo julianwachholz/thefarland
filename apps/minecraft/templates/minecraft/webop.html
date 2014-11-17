@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}thefar.land | WebOp Panel{% endblock %}
+
+{% block content %}
+<h3>WebOp Panel</h3>
+<div class="row">
+  <div class="medium-3 columns">
+    <ul class="side-nav">
+    {% if perms.minecraft.gamemode_spectator %}
+      <li>
+        <a href="{% url 'minecraft:spectator' %}">Spectator mode</a>
+      </li>
+    {% endif %}
+    </ul>
+  </div>
+  <div id="main" class="medium-9 columns">
+    {% block webop_panel %}
+      <p>Choose an action to the left.</p>
+    {% endblock %}
+  </div>
+</div>
+{% endblock %}

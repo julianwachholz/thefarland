@@ -2,13 +2,14 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
 
-from .views import IndexView
+from . import views
 
 
 urlpatterns = [
-    url(r'^$', IndexView.as_view(), name='index'),
+    url(r'^$', views.index, name='index'),
+    url(r'^contact/$', views.contact, name='contact'),
     url(r'^accounts/', include('apps.accounts.urls', namespace='accounts')),
-
+    url(r'^mc/', include('apps.minecraft.urls', namespace='minecraft')),
     url(r'^admin/', include(admin.site.urls)),
 ]
 

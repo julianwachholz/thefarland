@@ -33,8 +33,10 @@ TEMPLATE_DEBUG = DEBUG
 
 SECRET_KEY = get_env_setting('SECRET_KEY', 'dummy' if DEBUG else None)
 
-# TODO: add hosts to ALLOWED_HOSTS
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'thefar.land',
+    'test.thefar.land',
+]
 
 # Application definition
 
@@ -48,6 +50,7 @@ INSTALLED_APPS = (
 
     'formulation',
     'apps.accounts',
+    'apps.minecraft',
 )
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -86,10 +89,10 @@ CACHES = {
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
 
 
 if DEBUG:
+    SESSION_ENGINE = 'django.contrib.sessions.backends.db'
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
@@ -161,3 +164,23 @@ CELERY_ROUTES = {
         'routing_key': 'minecraft',
     },
 }
+
+if not DEBUG:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'file': {
+                'level': 'INFO',
+                'class': 'logging.FileHandler',
+                'filename': get_env_setting('LOG_FILE'),
+            },
+        },
+        'loggers': {
+            'django.request': {
+                'handlers': ['file'],
+                'level': 'INFO',
+                'propagate': True,
+            },
+        },
+    }

@@ -9,5 +9,64 @@
     </div>
   {% endif %}
 
-  <p>Hello, world!</p>
+  {% if perms.minecraft %}
+    <div class="alert-box secondary">
+      <a href="{% url 'minecraft:webop' %}">Click here to go to the WebOp control panel.</a>
+    </div>
+  {% endif %}
+
+  <h2>Vanilla Minecraft server with a twist</h2>
+
+  <p>Hey there! The Farland Minecraft server is now open for everybody!</p>
+  <p>Feel free to join our server. If you have any questions <a href="{% url 'contact' %}">send us an email</a>.</p>
+
+  <h2>Server Address</h2>
+  <p><strong>thefar.land</strong> (enter this in your Minecraft client).</p>
+
+  <h3>Server Rules</h3>
+  <ol>
+    <li>Don't be a hacker, those kind of people tend to like vanilla flavor.</li>
+    <li>Don't be a beggar. You're also not from Planet Minecraft.</li>
+    <li>Don't be a cunt. Swearing is allowed but be mature.</li>
+  </ol>
+
+  <h3>Support us!</h3>
+  <p><a href="http://minecraft-server-list.com/server/262254/vote/" target="_blank">Vote for us here!</a></p>
+
+  <h3>Donations</h3>
+  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+    <input type="hidden" name="cmd" value="_donations">
+    <input type="hidden" name="business" value="donations@thefar.land">
+    <!-- <input type="hidden" name="lc" value="CH"> -->
+    <input type="hidden" name="item_name" value="The Farland Server Upkeep">
+    <input type="hidden" name="no_note" value="0">
+    <input type="hidden" name="cn" value="Your Minecraft username:">
+    <input type="hidden" name="no_shipping" value="1">
+    <input type="hidden" name="rm" value="1">
+    <input type="hidden" name="return" value="http://thefar.land/">
+
+    <p>Help us pay for the server, donate now.</p>
+    <div class="row">
+      <div class="small-3 columns">
+        <label for="donate_currency">Currency</label>
+        <select id="donate_currency" name="currency_code">
+          <option value="CHF">CHF</option>
+          <option value="USD">US $</option>
+          <option value="EUR">€</option>
+          <option value="GBP">GB £</option>
+          <option value="CAD">CA $</option>
+          <option value="AUD">AU $</option>
+        </select>
+      </div>
+      <div class="small-3 columns">
+        <label for="donate_amount">Amount</label>
+        <input id="donate_amount" type="number" name="amount" value="5.00" min="1.00" max="100.00" step="1.00">
+      </div>
+      <div class="small-6 columns"></div>
+    </div>
+    <button type="submit" class="small button">Donate with PayPal</button>
+    <p><small>Swiss Francs (CHF) are preferred to keep the conversion fees low.</small><br>
+    Donators will receive a golden ingame name (min. 5 USD or equivalent).</p>
+  </form>
+
 {% endblock %}

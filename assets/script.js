@@ -42,11 +42,35 @@
         })
     };
 
-    d.addEventListener('DOMContentLoaded', function () {
-        d.getElementById('send-verification').addEventListener('click', function (event) {
-            event.preventDefault();
-            verificationCode(this.getAttribute('data-url'), this.getAttribute('data-csrf'));
+    function queryCoords(url, csrf_token) {
+        var status = d.getElementById('my-coords');
+        status.innerHTML = 'Loading...';
+
+        ajax('POST', url, {csrfmiddlewaretoken: csrf_token}, function (response) {
+            if (response.status === 'OK') {
+                status.innerHTML = '<table><tr><th>X</th><td>' + response.x + '</td></tr>' +
+                    '<tr><th>Y</th><td>' + response.y + '</td></tr>' +
+                    '<tr><th>Z</th><td>' + response.z + '</td></tr></table>';
+            } else {
+                status.className = 'alert-box alert';
+                status.innerHTML = response.error;
+            }
         });
+    };
+
+    function actionButton(id, callback) {
+        var button = d.getElementById(id);
+        if (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                callback(this.getAttribute('data-url'), this.getAttribute('data-csrf'));
+            })
+        }
+    };
+
+    d.addEventListener('DOMContentLoaded', function () {
+        actionButton('send-verification', verificationCode);
+        actionButton('query-coords', queryCoords);
     });
 
 } (window, document));
