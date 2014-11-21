@@ -50,9 +50,9 @@
             if (response.status === 'OK') {
                 if (response.gamemode === 3) {
                     status.innerHTML = '<p>Your coordinates:</p><table>' +
-                        '<tr><th>X</th><td>' + response.x + '</td></tr>' +
-                        '<tr><th>Y</th><td>' + response.y + '</td></tr>' +
-                        '<tr><th>Z</th><td>' + response.z + '</td></tr>' +
+                        '<tr><th>X</th><td>' + response.coords.x + '</td></tr>' +
+                        '<tr><th>Y</th><td>' + response.coords.y + '</td></tr>' +
+                        '<tr><th>Z</th><td>' + response.coords.z + '</td></tr>' +
                     '</table>';
                 } else {
                     status.innerHTML = '<p>Switched back to Survival.</p>';

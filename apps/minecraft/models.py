@@ -50,6 +50,8 @@ class WebOperator(models.Model):
         return self.user.username
 
     def log_action(self, action, arguments=None):
+        if arguments is None:
+            arguments = ''
         self.log.create(action=action, arguments=arguments)
 
     def query_coords(self, save=False):
