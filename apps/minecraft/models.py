@@ -58,7 +58,7 @@ class WebOperator(models.Model):
 
         """
         coords = commands.query_player_coords(self.username)
-        if save:
+        if save and coords:
             self.set_coords(coords)
         return coords
 
