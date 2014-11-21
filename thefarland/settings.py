@@ -60,6 +60,7 @@ INSTALLED_APPS = (
     'formulation',
     'apps.accounts',
     'apps.minecraft',
+    'apps.boards',
 )
 
 AUTH_USER_MODEL = 'accounts.User'

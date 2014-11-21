@@ -1,12 +1,13 @@
 celery==3.1.16
 dj-config-url==0.1.1
+django-autoslug==1.7.2
 django-redis==3.7.2
 django-vanilla-views==1.0.3
 Django==1.7.1
 formulation==2.0.10
+newrelic==2.38.0.31
 Pillow==2.6.1
 psycopg2==2.5.4
 python-dateutil==2.2
 pytz==2014.9
 uWSGI==2.0.8
-newrelic==2.38.0.31
