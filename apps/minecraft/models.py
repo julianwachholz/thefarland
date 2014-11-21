@@ -70,7 +70,11 @@ class WebOperator(models.Model):
         self.last_z = coords['z']
 
     def get_coords(self):
-        return (self.last_x, self.last_y, self.last_z)
+        return {
+            'x': self.last_x,
+            'y': self.last_y,
+            'z': self.last_z,
+        }
     get_coords.short_description = 'Last position'
 
     def tp(self, coords):
