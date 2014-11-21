@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load markdown_deux_tags %}
+
+{% block content %}
+
+  <h2>
+    {{ thread }}
+    <small>
+      <a href="{{ thread.board.get_absolute_url }}">
+        {{ thread.board }}
+      </a>
+    </small>
+  </h2>
+
+  {% for post in thread.posts.all %}
+    <div class="row thread post">
+      <div class="small-3 columns">
+        {% if user.is_verified %}
+          <img class="left" src="{{ post.user.get_avatar_url }}" width="64" height="64">
+        {% endif %}
+        <p>
+          {{ post.user }}
+          {% if post.user.is_trusted %}
+            <i class="fa fa-check" title="Trusted user"></i>
+          {% endif %}
+        </p>
+        <p class="post-created">
+          <i class="fa fa-clock-o"></i>
+          <time title="{{ post.created|date:'c' }}"
+                datetime="{{ post.created|date:'c' }}">
+            {{ post.created|timesince }} ago
+          </time>
+        </p>
+      </div>
+      <div class="small-9 columns">
+        {{ post.content|markdown }}
+      </div>
+    </div>
+  {% empty %}
+    <strong>Shoot, nothing to see here.</strong>
+  {% endfor %}
+
+{% endblock %}

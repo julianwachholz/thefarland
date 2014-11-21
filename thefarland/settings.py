@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'formulation',
+    'markdown_deux',
     'apps.accounts',
     'apps.minecraft',
     'apps.boards',

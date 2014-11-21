@@ -1,4 +1,5 @@
 from django.db.models import F, Count
+from django.utils import timezone
 
 
 def thread_post_save(instance, **kwargs):
@@ -15,7 +16,7 @@ def post_post_save(instance, **kwargs):
     board_post_count = Post.objects.filter(thread__board=thread.board) \
                            .aggregate(num=Count('pk'))['num']
     Thread.objects.filter(pk=instance.thread_id) \
-          .update(post_count=thread_post_count)
+          .update(post_count=thread_post_count, updated=timezone.now())
     Board.objects.filter(pk=thread.board_id) \
          .update(post_count=board_post_count)
 

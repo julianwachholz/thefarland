@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^contact/$', views.contact, name='contact'),
     url(r'^accounts/', include('apps.accounts.urls', namespace='accounts')),
+    url(r'^board/', include('apps.boards.urls', namespace='boards')),
     url(r'^mc/', include('apps.minecraft.urls', namespace='minecraft')),
     url(r'^admin/', include(admin.site.urls)),
 ]

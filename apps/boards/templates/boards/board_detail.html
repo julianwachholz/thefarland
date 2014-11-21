@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <h2>
+    {{ board }}
+    <small>
+      <a href="{% url 'boards:list' %}">
+        Discussion board
+      </a>
+    </small>
+  </h2>
+
+  <div class="row">
+    <div class="small-5 columns">
+      <strong>Thread</strong>
+    </div>
+    <div class="small-1 columns">
+      <strong>Posts</strong>
+    </div>
+    <div class="small-3 columns">
+      <strong>Updated</strong>
+    </div>
+    <div class="small-3 columns">
+      <strong>Created</strong>
+    </div>
+  </div>
+  {% for thread in board.threads.all %}
+    <div class="row">
+      <div class="small-5 columns">
+        <a href="{{ thread.get_absolute_url }}">{{ thread }}</a>
+        {% if thread.is_pinned %}
+          <i title="Thread is pinned." class="fa fa-thumb-tack"></i>
+        {% endif %}
+        {% if thread.is_locked %}
+          <i title="Thread is locked." class="fa fa-lock"></i>
+        {% endif %}
+      </div>
+      <div class="small-1 columns">
+        {{ thread.post_count }}
+      </div>
+      <div class="small-3 columns">
+        {{ thread.updated|timesince }} ago
+      </div>
+      <div class="small-3 columns">
+        {{ thread.created|timesince }} ago
+      </div>
+    </div>
+  {% empty %}
+    <strong>No threads yet.</strong>
+  {% endfor %}
+
+{% endblock %}

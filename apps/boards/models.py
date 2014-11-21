@@ -2,11 +2,12 @@ from django.conf import settings
 from django.db import models
 from django.core.urlresolvers import reverse
 from autoslug import AutoSlugField
+from autoslug.settings import slugify
 
 
 class Board(models.Model):
     name = models.CharField(max_length=100)
-    slug = AutoSlugField(populate_from='name')
+    slug = AutoSlugField(populate_from='name', unique=True)
     description = models.TextField(blank=True)
     ordering = models.IntegerField(default=0)
     thread_count = models.BigIntegerField(default=0, editable=False)
@@ -31,12 +32,19 @@ class Board(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('boards:board', kwargs={'slug': self.slug})
+        return reverse('boards:detail', kwargs={'slug': self.slug})
+
+
+def slash_slugify(value):
+    slug_parts = []
+    for part in value.split('/'):
+        slug_parts.append(slugify(part))
+    return '/'.join(slug_parts)
 
 
 class Thread(models.Model):
     name = models.CharField(max_length=200)
-    slug = AutoSlugField(populate_from='name')
+    slug = AutoSlugField(populate_from='get_slug', unique=True, slugify=slash_slugify)
     is_pinned = models.BooleanField(default=False)
     is_locked = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -55,6 +63,9 @@ class Thread(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_slug(self):
+        return '{}/{}'.format(self.board.slug, self.name)
 
     def get_absolute_url(self):
         return reverse('boards:thread', kwargs={'slug': self.slug})
