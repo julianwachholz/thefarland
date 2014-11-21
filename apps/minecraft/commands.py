@@ -33,8 +33,6 @@ def query_player_coords(username):
     Get a players X,Y,Z coordinates.
     Must be online.
 
-    Returns a task ID.
-
     """
     cmd = 'execute %s ~ ~ ~ testforblock ~ ~ ~ command_block' % username
     output = minecraft_cmd_return.delay(cmd).get(timeout=5)
@@ -43,3 +41,33 @@ def query_player_coords(username):
     if match:
         return match.groupdict()
     return None
+
+
+def tp_player(username, player=None, x=None, y=None, z=None):
+    """
+    Teleport a player to destination.
+
+    :param `destination`: other player name or X Y Z coordinates
+
+    """
+    if player is not None:
+        cmd = 'tp %s %s' % (username, player)
+    else:
+        cmd = 'tp %s %d %d %d' % (username, x, y, z)
+    minecraft_cmd.delay(cmd)
+
+
+def change_gamemode(username, mode):
+    """
+    Change the user's gamemode.
+
+    Mode can be one of:
+
+    0 - survival
+    1 - creative
+    2 - adventure
+    3 - spectator
+
+    """
+    cmd = 'gamemode %s %s' % (mode, username)
+    minecraft_cmd.delay(cmd)

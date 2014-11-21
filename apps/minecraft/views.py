@@ -1,3 +1,4 @@
+import json
 from django.http import JsonResponse
 from django.contrib.auth.decorators import permission_required
 from vanilla import TemplateView
@@ -13,21 +14,35 @@ spectator = permission_required('minecraft.gamemode_spectator')(spectator)
 
 
 @permission_required('minecraft.gamemode_spectator')
-def get_coords(request):
+def gamemode_spectator(request):
+    """
+    Toggle between spectator and survival mode.
+
+    """
     if request.method != 'POST':
         return JsonResponse({'status': 'FAIL', 'error': 'Use POST.'})
 
-    coords = query_player_coords(request.user.username)
-    if coords is None:
-        return JsonResponse({'status': 'FAIL', 'error': 'Player not found.'})
+    try:
+        webop = request.user.webop
+    except WebOperator.DoesNotExist:
+        return JsonResponse({'status': 'FAIL', 'error': 'You are not allowed to perform this action.'})
 
-    coords.update({
+    if webop.is_spectator():
+        webop.log_action('gamemode survival')
+        coords = webop.get_coords()
+        webop.go_survival()
+        webop.tp(coords)
+    else:
+        coords = webop.query_coords(save=True)
+        if coords is None:
+            return JsonResponse({'status': 'FAIL', 'error': 'Player is not online.'})
+        webop.log_action('gamemode spectator', json.dumps(coords, indent=2))
+        webop.go_spectator()
+
+    webop.save()
+
+    return JsonResponse({
         'status': 'OK',
+        'gamemode': webop.gamemode,
+        'coords': coords,
     })
-
-    WebOperator.objects.filter(user=request.user).update(
-        last_x=coords['x'],
-        last_y=coords['y'],
-        last_z=coords['z'],
-    )
-    return JsonResponse(coords)

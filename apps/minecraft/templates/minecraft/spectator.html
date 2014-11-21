@@ -2,8 +2,15 @@
 
 {% block webop_panel %}
 
-<button id="query-coords" class="small button"
-    data-url="{% url 'minecraft:get_coords' %}" data-csrf="{{ csrf_token }}">Get my coordinates</button>
-<div id="my-coords"></div>
+<button id="gm-spectator" class="small button"
+    data-url="{% url 'minecraft:gamemode_spectator' %}"
+    data-csrf="{{ csrf_token }}">
+    {% if user.webop.is_spectator %}
+        Back to survival mode
+    {% else %}
+        Go to spectator mode
+    {% endif %}
+</button>
+<div id="gm-spectator-stats"></div>
 
 {% endblock %}

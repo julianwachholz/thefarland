@@ -5,6 +5,6 @@ from .models import WebOperator
 
 @admin.register(WebOperator)
 class WebOperatorAdmin(admin.ModelAdmin):
-    list_display = ['user']
+    list_display = ['user', 'gamemode', 'get_coords']
     search_fields = ['user', 'user__username']
     ordering = ['user__username']
