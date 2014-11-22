@@ -38,6 +38,9 @@
       {% for error in errors %}
         <span class="error">{{ error }}</span>
       {% endfor %}
+      {% if help_text %}
+        <span class="help">{{ help_text|safe }}</span>
+      {% endif %}
     </div>
   </div>
 {% endblock %}
@@ -64,6 +67,9 @@
       {% for error in errors %}
         <span class="error">{{ error }}</span>
       {% endfor %}
+      {% if help_text %}
+        <span class="help">{{ help_text|safe }}</span>
+      {% endif %}
     </div>
   </div>
 {% endblock %}

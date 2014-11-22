@@ -81,6 +81,20 @@
 
 {% endblock %}
 
+{% if debug %}
+<div class="alert-box secondary">
+  <p><strong>SQL Queries</strong></p>
+  <ol>
+  {% for query in sql_queries %}
+  <li>
+    <code>{{ query.sql }}</code>
+    (in {{ query.time }}s)
+  </li>
+  {% endfor %}
+  </ol>
+</div>
+{% endif %}
+
 <script src="{% static 'script.js' %}"></script>
 <script>
 /*jshint -W030 */

@@ -40,4 +40,8 @@
     <strong>Shoot, nothing to see here.</strong>
   {% endfor %}
 
+  {% if view.user_can_post %}
+    <a href="#" class="button small">New reply</a>
+  {% endif %}
+
 {% endblock %}

@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.core.validators import MinLengthValidator
 from autoslug import AutoSlugField
 from autoslug.settings import slugify
+from .managers import BoardManager
 
 
 class Board(models.Model):
@@ -23,6 +25,8 @@ class Board(models.Model):
                                    related_name='boards_post+',
                                    help_text="Post replies in this board.")
 
+    objects = BoardManager()
+
     class Meta:
         verbose_name = 'Board'
         verbose_name_plural = 'Boards'
@@ -34,6 +38,13 @@ class Board(models.Model):
     def get_absolute_url(self):
         return reverse('boards:detail', kwargs={'slug': self.slug})
 
+    def get_create_url(self):
+        return reverse('boards:thread_create', kwargs={'slug': self.slug})
+
+    def can_create_thread(self, user):
+        return user.is_superuser or \
+            user.groups.filter(id=self.group_create_id).exists()
+
 
 def slash_slugify(value):
     slug_parts = []
@@ -43,13 +54,14 @@ def slash_slugify(value):
 
 
 class Thread(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=70, validators=[MinLengthValidator(6)])
     slug = AutoSlugField(populate_from='get_slug', unique=True, slugify=slash_slugify)
     is_pinned = models.BooleanField(default=False)
     is_locked = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     board = models.ForeignKey(Board, related_name='threads')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='threads')
     post_count = models.BigIntegerField(default=0, editable=False)
 
     class Meta:
@@ -64,11 +76,17 @@ class Thread(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('boards:thread', kwargs={'slug': self.slug})
+
     def get_slug(self):
         return '{}/{}'.format(self.board.slug, self.name)
 
-    def get_absolute_url(self):
-        return reverse('boards:thread', kwargs={'slug': self.slug})
+    def can_reply(self, user):
+        return user.is_superuser or \
+            (not self.is_locked and
+                (self.board.group_post is None or
+                    user.groups.filter(id=self.board.group_post_id).exists()))
 
 
 class Post(models.Model):

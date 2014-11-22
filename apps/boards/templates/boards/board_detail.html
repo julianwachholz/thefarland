@@ -50,4 +50,9 @@
     <strong>No threads yet.</strong>
   {% endfor %}
 
+  {% if view.user_can_create_thread %}
+    <a href="{{ board.get_create_url }}" class="button small">New thread</a>
+  {% endif %}
+
+
 {% endblock %}

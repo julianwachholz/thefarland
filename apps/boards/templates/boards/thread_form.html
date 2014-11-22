@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load formulation markdown_deux_tags %}
+
+{% block content %}
+
+  <h2>
+    New thread
+    <small>
+      <a href="{{ board.get_absolute_url }}">
+        {{ board }}
+      </a>
+    </small>
+  </h2>
+
+  {% form 'forms/foundation.html' form %}
+  <form method="post">
+    {% csrf_token %}
+
+    {% field form.name %}
+    {% field form.contents %}
+
+    {% use 'Submit' label='Create thread' %}
+  </form>
+  {% endform %}
+
+{% endblock %}

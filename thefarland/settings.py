@@ -38,6 +38,8 @@ ALLOWED_HOSTS = [
     'test.thefar.land',
 ]
 
+INTERNAL_IPS = ['127.0.0.1', '::1']
+
 SECURE_PROXY_SSL_HEADER = ('SERVER_PROTOCOL', 'https')
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
