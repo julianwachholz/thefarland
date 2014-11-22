@@ -2,13 +2,6 @@
 
 {% block content %}
 
-  {% if not user.is_anonymous and not user.is_verified %}
-    <div class="alert-box warning">
-      You haven't verified your username yet. You can participate in raffles and vote with your verified user account!
-      <a class="tiny secondary button" href="{% url 'accounts:verify' %}">Verify now!</a>
-    </div>
-  {% endif %}
-
   <h2>Vanilla Minecraft server with a twist</h2>
 
   <p>Hey there! The Farland Minecraft server is now open for everybody!</p>

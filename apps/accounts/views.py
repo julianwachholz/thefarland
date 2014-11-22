@@ -102,9 +102,10 @@ class VerifyFormView(UserFormKwargsMixin, SuccessMessageMixin, FormView):
         form.save()
         return super(VerifyFormView, self).form_valid(form)
 
-verify = VerifyFormView.as_view()
+verify = login_required(VerifyFormView.as_view())
 
 
+@login_required
 def get_verify_token(request):
     """
     Send verification token to minecraft user.

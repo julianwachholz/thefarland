@@ -61,6 +61,7 @@ INSTALLED_APPS = (
 
     'formulation',
     'markdown_deux',
+    'pure_pagination',
     'apps.accounts',
     'apps.minecraft',
     'apps.boards',
@@ -142,6 +143,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
 )
 
+PAGINATION_SETTINGS = {
+    'PAGE_RANGE_DISPLAYED': 5,
+    'MARGIN_PAGES_DISPLAYED': 2,
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/

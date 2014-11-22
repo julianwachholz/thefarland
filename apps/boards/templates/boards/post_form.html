@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load formulation markdown_deux_tags %}
+
+{% block content %}
+
+  <h2>
+    New reply
+    <small>
+      <a href="{{ thread.get_absolute_url }}">
+        {{ thread }}
+      </a>
+    </small>
+  </h2>
+
+  {% form 'forms/foundation.html' form %}
+  <form method="post">
+    {% csrf_token %}
+
+    {% field form.contents %}
+
+    {% use 'Submit' label='Post reply' %}
+  </form>
+  {% endform %}
+
+{% endblock %}

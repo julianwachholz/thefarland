@@ -25,7 +25,7 @@
       <strong>Created</strong>
     </div>
   </div>
-  {% for thread in board.threads.all %}
+  {% for thread in threads %}
     <div class="row">
       <div class="small-5 columns">
         <a href="{{ thread.get_absolute_url }}">{{ thread }}</a>
@@ -34,6 +34,9 @@
         {% endif %}
         {% if thread.is_locked %}
           <i title="Thread is locked." class="fa fa-lock"></i>
+        {% endif %}
+        {% if thread.post_count > 10 %}
+          <a href="{{ thread.get_latest_url }}">&raquo;</a>
         {% endif %}
       </div>
       <div class="small-1 columns">
@@ -50,9 +53,12 @@
     <strong>No threads yet.</strong>
   {% endfor %}
 
+  {% if is_paginated %}
+    {% include '_pagination.html' with page_obj=page_obj previous='Newer' next='Older' %}
+  {% endif %}
+
   {% if view.user_can_create_thread %}
     <a href="{{ board.get_create_url }}" class="button small">New thread</a>
   {% endif %}
-
 
 {% endblock %}

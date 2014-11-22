@@ -12,10 +12,10 @@
     </small>
   </h2>
 
-  {% for post in thread.posts.all %}
-    <div class="row thread post">
+  {% for post in posts %}
+    <div class="row thread post" id="post-{{ post.id }}">
       <div class="small-3 columns">
-        {% if user.is_verified %}
+        {% if post.user.is_verified %}
           <img class="left" src="{{ post.user.get_avatar_url }}" width="64" height="64">
         {% endif %}
         <p>
@@ -33,15 +33,23 @@
         </p>
       </div>
       <div class="small-9 columns">
-        {{ post.content|markdown }}
+        {{ post.contents|markdown }}
       </div>
     </div>
   {% empty %}
     <strong>Shoot, nothing to see here.</strong>
   {% endfor %}
 
+  {% if is_paginated %}
+    {% include '_pagination.html' with page_obj=page_obj previous='Previous' next='Next' %}
+  {% endif %}
+
+  {% if thread.is_locked %}
+    <span class="button small disabled">Thread is locked</a>
+  {% endif %}
+
   {% if view.user_can_post %}
-    <a href="#" class="button small">New reply</a>
+    <a href="{{ thread.get_post_url }}" class="button small">New reply</a>
   {% endif %}
 
 {% endblock %}

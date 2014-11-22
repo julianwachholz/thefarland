@@ -1,0 +1,29 @@
+<div class="pagination-centered">
+  <ul class="pagination" role="menubar" aria-label="Pagination">
+    {% if page_obj.has_previous %}
+      <li class="arrow">
+        <a href="?page={{ page_obj.previous_page_number }}">&lsaquo; {{ previous }}</a>
+      </li>
+    {% endif %}
+
+    {% for page in page_obj.pages %}
+      {% if page %}
+        {% if page == page_obj.number %}
+          <li class="current"><a>{{ page }}</a></li>
+        {% else %}
+        <li>
+          <a href="?page={{ page }}">{{ page }}</a>
+        </li>
+        {% endif %}
+      {% else %}
+        <li class="unavailable">...</li>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <li class="arrow">
+        <a href="?page={{ page_obj.next_page_number }}">{{ next }} &raquo;</a>
+      </li>
+    {% endif %}
+  </ul>
+</div>

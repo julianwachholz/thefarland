@@ -1,3 +1,4 @@
+import math
 from django.conf import settings
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -36,13 +37,14 @@ class Board(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('boards:detail', kwargs={'slug': self.slug})
+        return reverse('boards:thread_list', kwargs={'board': self.slug})
 
     def get_create_url(self):
-        return reverse('boards:thread_create', kwargs={'slug': self.slug})
+        return reverse('boards:thread_create', kwargs={'board': self.slug})
 
     def can_create_thread(self, user):
         return user.is_superuser or \
+            self.group_create is None or \
             user.groups.filter(id=self.group_create_id).exists()
 
 
@@ -54,6 +56,8 @@ def slash_slugify(value):
 
 
 class Thread(models.Model):
+    THREADS_PER_PAGE = 10
+
     name = models.CharField(max_length=70, validators=[MinLengthValidator(6)])
     slug = AutoSlugField(populate_from='get_slug', unique=True, slugify=slash_slugify)
     is_pinned = models.BooleanField(default=False)
@@ -77,10 +81,19 @@ class Thread(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('boards:thread', kwargs={'slug': self.slug})
+        return reverse('boards:post_list', kwargs={'thread': self.slug})
+
+    def get_post_url(self):
+        return reverse('boards:post_create', kwargs={'thread': self.slug})
+
+    def get_latest_url(self):
+        return reverse('boards:post_latest', kwargs={'thread': self.slug})
 
     def get_slug(self):
         return '{}/{}'.format(self.board.slug, self.name)
+
+    def get_last_page(self):
+        return math.ceil(self.post_count / Post.POSTS_PER_PAGE)
 
     def can_reply(self, user):
         return user.is_superuser or \
@@ -90,11 +103,13 @@ class Thread(models.Model):
 
 
 class Post(models.Model):
+    POSTS_PER_PAGE = 10
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='posts')
     thread = models.ForeignKey(Thread, related_name='posts')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    content = models.TextField()
+    contents = models.TextField()
 
     class Meta:
         verbose_name = 'Post'
@@ -106,3 +121,9 @@ class Post(models.Model):
             thread_id=self.thread_id,
             created=self.created
         )
+
+    def get_absolute_url(self):
+        return reverse('boards:post_latest', kwargs={
+            'thread': self.thread.slug,
+            'post': self.id,
+        })
