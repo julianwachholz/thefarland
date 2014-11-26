@@ -4,7 +4,11 @@
 {% block content %}
 
   <h2>
-    New reply
+    {% if post %}
+      Edit reply
+    {% else %}
+      New reply
+    {% endif %}
     <small>
       <a href="{{ thread.get_absolute_url }}">
         {{ thread }}
@@ -17,6 +21,9 @@
     {% csrf_token %}
 
     {% field form.contents %}
+    {% if post %}
+      {% field form.reason %}
+    {% endif %}
 
     {% use 'Submit' label='Post reply' %}
   </form>

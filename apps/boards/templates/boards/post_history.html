@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <h2>
+    Post history
+    <small>
+      <a href="{{ post.thread.get_absolute_url }}">
+        {{ post.thread }}
+      </a>
+    </small>
+  </h2>
+
+  <div class="row thread post">
+    <div class="large-3 columns">
+      <i class="fa fa-clock-o"></i>
+      <time>{{ post.updated }}</time>
+    </div>
+    <div class="large-9 columns">
+      <pre>{{ post.contents }}</pre>
+    </div>
+  </div>
+
+  {% for old_post in post.history.all %}
+  <div class="row thread post">
+    <div class="large-3 columns">
+      <i class="fa fa-clock-o"></i>
+      <time>{{ old_post.created }}</time>
+      <p>Edit reason: {{ old_post.reason }}</p>
+    </div>
+    <div class="large-9 columns">
+      <pre>{{ old_post.contents }}</pre>
+    </div>
+  </div>
+  {% empty %}
+  <div class="row">
+    <div class="large-12 columns">
+      Post was never modified.
+    </div>
+  </div>
+  {% endfor %}
+
+{% endblock %}

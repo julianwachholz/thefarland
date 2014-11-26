@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.core.validators import MinLengthValidator
+from django.utils.functional import cached_property
 from autoslug import AutoSlugField
 from autoslug.settings import slugify
 from .managers import BoardManager
@@ -73,8 +74,8 @@ class Thread(models.Model):
         verbose_name_plural = 'Threads'
         ordering = ['-is_pinned', '-updated']
         permissions = [
-            ('can_pin', "Can pin threads."),
-            ('can_lock', "Can lock threads."),
+            ('thread_pin', "Can pin threads."),
+            ('thread_lock', "Can lock threads."),
         ]
 
     def __str__(self):
@@ -97,9 +98,9 @@ class Thread(models.Model):
 
     def can_reply(self, user):
         return user.is_superuser or \
-            (not self.is_locked and
-                (self.board.group_post is None or
-                    user.groups.filter(id=self.board.group_post_id).exists()))
+            not self.is_locked and \
+            (self.board.group_post is None or
+                user.groups.filter(id=self.board.group_post_id).exists())
 
 
 class Post(models.Model):
@@ -109,12 +110,17 @@ class Post(models.Model):
     thread = models.ForeignKey(Thread, related_name='posts')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    is_modified = models.BooleanField(default=False, editable=False)
     contents = models.TextField()
 
     class Meta:
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
         ordering = ['created']
+        permissions = [
+            ('post_update', "Can edit posts."),
+            ('post_delete', "Can delete posts"),
+        ]
 
     def __str__(self):
         return 'Post in {thread_id} at {created}'.format(
@@ -123,7 +129,37 @@ class Post(models.Model):
         )
 
     def get_absolute_url(self):
+        # XXX Not really correct, but the only usecase works fine here.
         return reverse('boards:post_latest', kwargs={
             'thread': self.thread.slug,
             'post': self.id,
         })
+
+    @cached_property
+    def latest_history(self):
+        return self.history.first()
+
+    def can_update(self, user):
+        return user.is_superuser or \
+            self.user is user and not self.thread.is_locked or \
+            user.has_perm('boards.post_update')
+
+
+class PostHistory(models.Model):
+    post = models.ForeignKey(Post, related_name='history')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='edited_posts+')
+    created = models.DateTimeField()
+    reason = models.CharField(max_length=200, blank=True)
+
+    contents = models.TextField(help_text="Previous post contents.")
+
+    class Meta:
+        verbose_name = 'Post history'
+        verbose_name_plural = 'Post history'
+        ordering = ['-created']
+        permissions = [
+            ('view_history', "View post history"),
+        ]
+
+    def __str__(self):
+        return 'PostHistory #{} at {}'.format(self.id, self.created)

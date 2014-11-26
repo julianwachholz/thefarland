@@ -1,12 +1,12 @@
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.functional import cached_property
-from vanilla import ListView, DetailView, CreateView, RedirectView
+from vanilla import ListView, DetailView, CreateView, UpdateView, RedirectView
 from pure_pagination import Paginator
 from utils.views import UserFormKwargsMixin, SuccessMessageMixin
-from .forms import ThreadCreateForm, PostCreateForm
+from .forms import ThreadCreateForm, PostCreateForm, PostUpdateForm
 from .models import Board, Thread, Post
 
 
@@ -121,7 +121,6 @@ post_latest = LatestPostListView.as_view()
 
 
 class PostCreateView(PostView, UserFormKwargsMixin, SuccessMessageMixin, CreateView):
-    model = Post
     form_class = PostCreateForm
 
     success_message = "Post created, you can see it below."
@@ -138,3 +137,32 @@ class PostCreateView(PostView, UserFormKwargsMixin, SuccessMessageMixin, CreateV
         return super(PostCreateView, self).get_form(*args, **kwargs)
 
 post_create = login_required(PostCreateView.as_view())
+
+
+class PostUpdateView(PostView, UserFormKwargsMixin, SuccessMessageMixin, UpdateView):
+    form_class = PostUpdateForm
+    object = None
+
+    success_message = "Post updated, you can see it below."
+
+    def get_object(self):
+        if not self.object:
+            self.object = super(PostUpdateView, self).get_object()
+        return self.object
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.get_object().can_update(request.user):
+            messages.add_message(request, messages.ERROR,
+                                 "You don't have permission to update this post.")
+            return redirect(self.thread.get_absolute_url())
+        return super(PostUpdateView, self).dispatch(request, *args, **kwargs)
+
+post_update = login_required(PostUpdateView.as_view())
+
+
+class PostHistoryView(DetailView):
+    model = Post
+    context_object_name = 'post'
+    template_name_suffix = '_history'
+
+post_history = permission_required('boards.view_history')(PostHistoryView.as_view())

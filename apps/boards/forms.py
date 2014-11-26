@@ -48,3 +48,28 @@ class PostCreateForm(SaveKwargsPopMixin, KwargsPopMixin, forms.ModelForm):
     class Meta:
         model = Post
         fields = ['contents']
+
+
+class PostUpdateForm(KwargsPopMixin, forms.ModelForm):
+    """
+    Modify an existing post.
+
+    """
+    contents = CONTENT_FIELD
+    reason = forms.CharField(label="Reason for edit", required=False)
+
+    class Meta:
+        model = Post
+        fields = ['contents']
+
+    def save(self, commit=True):
+        post = super(PostUpdateForm, self).save(commit=False)
+        post.is_modified = True
+        post.history.create(
+            user=self.user,
+            reason=self.cleaned_data['reason'],
+            created=self.instance.updated,
+            contents=self.instance.contents,
+        )
+        post.save()
+        return post

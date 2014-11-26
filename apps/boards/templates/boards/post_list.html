@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load markdown_deux_tags %}
+{% load markdown_deux_tags board_tags %}
 
 {% block content %}
 
@@ -33,7 +33,29 @@
         </p>
       </div>
       <div class="small-9 columns">
+        {% if user|can_update:post %}
+        <div class="post-action">
+          <a href="{% url 'boards:post_update' thread=thread.slug pk=post.pk %}"
+             title="Edit post" class="tiny secondary button">
+            <i class="fa fa-pencil"></i>
+          </a>
+        </div>
+        {% endif %}
+
         {{ post.contents|markdown }}
+
+        {% if post.is_modified %}
+        <small>
+          Post was edited {{ post.latest_history.created|timesince }} ago
+          by {{ post.latest_history.user }}.
+          {% if post.latest_history.reason %}
+            Reason: {{ post.latest_history.reason }}
+          {% endif %}
+          {% if perms.bords.view_history %}
+            <a href="{% url 'boards:post_history' pk=post.pk %}">View changes.</a>
+          {% endif %}
+        </small>
+        {% endif %}
       </div>
     </div>
   {% empty %}

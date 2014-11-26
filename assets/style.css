@@ -59,3 +59,7 @@ img.left {
 .post-created {
     margin-top: 3em;
 }
+
+.post-action {
+    float: right;
+}
