@@ -43,10 +43,12 @@ class Order(models.Model):
     UNPAID = 0
     PAID = 1
     ERROR = 2
+    CANCELED = 3
     STATUS = [
         (UNPAID, 'Waiting for payment...'),
         (PAID, 'Paid'),
         (ERROR, 'Error'),
+        (CANCELED, 'Canceled'),
     ]
     product = models.ForeignKey(Product, related_name='orders')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='orders')
