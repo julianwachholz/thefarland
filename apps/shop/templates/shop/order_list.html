@@ -1,0 +1,18 @@
+{% extends "settings.html" %}
+
+{% block settings %}
+
+  <h2>My orders</h2>
+
+  {% for order in orders %}
+  <div class="row">
+    <div class="large-8 columns">
+      <a href="{{ order.get_absolute_url }}">Order #{{ order.pk }}: {{ order }}</a>
+    </div>
+    <div class="large-4 columns">
+      {{ order.get_status_display }}
+    </div>
+  </div>
+  {% endfor %}
+
+{% endblock %}

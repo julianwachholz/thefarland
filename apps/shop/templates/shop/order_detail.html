@@ -1,0 +1,54 @@
+{% extends "settings.html" %}
+
+{% block settings %}
+
+  <h2>Order #{{ order.pk }}</h2>
+
+  <dl>
+    <dt>Product</dt>
+    <dd>{{ order.product }}</dd>
+
+    <dt>Price</dt>
+    <dd>{{ order.product.amount }}&nbsp;{{ order.product.currency }}</dd>
+
+    <dt>Status</dt>
+    <dd>{{ order.get_status_display }}</dd>
+    {% if form %}
+    <dd>
+      {{ form.render }}
+    </dd>
+    {% endif %}
+
+    {% if check_ipn %}
+      <dd id="ipn">Checking PayPal status...(refresh page)</dd>
+    {% endif %}
+
+    {% if order.can_redeem %}
+      <dt>Redeem</dt>
+      <dd>
+        {% if order.product.redeem_notes %}
+          Note: {{ order.product.redeem_notes }}
+        {% endif %}
+        <div id="redeem">
+          <button id="redeem-action" class="tiny button"
+                  data-url="{% url 'shop:order_redeem' pk=order.pk %}"
+                  data-csrf="{{ csrf_token }}">
+            CLICK HERE</button>
+        </div>
+      </dd>
+    {% endif %}
+
+    {% if order.redeemed %}
+    <dd class="alert-box success">
+      Redeemed on {{ order.updated|date }}
+    </dd>
+    {% endif %}
+  </dl>
+
+{% if check_ipn %}
+<script>
+  // todo check IPN
+</script>
+{% endif %}
+
+{% endblock %}

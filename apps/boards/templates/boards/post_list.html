@@ -13,7 +13,7 @@
   </h2>
 
   {% for post in posts %}
-    <div class="row thread post" id="post-{{ post.id }}">
+    <div class="row list thread post" id="post-{{ post.id }}">
       <div class="small-3 columns">
         {% if post.user.is_verified %}
           <img class="left" src="{{ post.user.get_avatar_url }}" width="64" height="64">

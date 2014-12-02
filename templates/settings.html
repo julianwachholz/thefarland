@@ -2,13 +2,20 @@
 
 {% block title %}thefar.land | settings{% endblock %}
 
-{% block side %}
-  <ul class="side-nav">
-    <li>
-      <a href="{% url 'accounts:user_update' %}">My account</a>
-    </li>
-    <li>
-      <a href="{#% url 'settings:settings_update' %#}">Settings</a>
-    </li>
-  </ul>
+{% block content %}
+<div class="row">
+  <div class="large-3 columns">
+    <ul class="side-nav">
+      <li>
+        <a href="{% url 'accounts:user_update' %}">My account</a>
+      </li>
+      <li>
+        <a href="{% url 'shop:order_list' %}">My orders</a>
+      </li>
+    </ul>
+  </div>
+  <div class="large-9 columns">
+    {% block settings %}{% endblock %}
+  </div>
+</div>
 {% endblock %}

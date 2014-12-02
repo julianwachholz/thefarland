@@ -64,6 +64,21 @@
         });
     }
 
+    function redeemOrder(url, csrf_token) {
+        var status = d.getElementById('redeem');
+        status.innerHTML = 'Loading...';
+
+        ajax('POST', url, {csrfmiddlewaretoken: csrf_token}, function (response) {
+            if (response.status === 'OK') {
+                status.className = 'alert-box success';
+                status.innerHTML = 'Redeemed!';
+            } else {
+                status.className = 'alert-box alert';
+                status.innerHTML = response.error;
+            }
+        });
+    }
+
     function actionButton(id, callback) {
         var button = d.getElementById(id);
         if (button) {
@@ -76,6 +91,7 @@
 
     d.addEventListener('DOMContentLoaded', function () {
         actionButton('send-verification', verificationCode);
+        actionButton('redeem-action', redeemOrder);
         actionButton('gm-spectator', toggleSpectator);
     });
 

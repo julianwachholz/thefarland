@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load markdown_deux_tags %}
+
+{% block content %}
+
+  <h2>Shop</h2>
+
+  <p>Every purchase helps us keep the server alive. We thank you for your support.</p>
+
+  {% for product in products %}
+    <div class="row list product" id="product-{{ product.id }}">
+      <div class="large-10 columns">
+        <h3>{{ product }}</h3>
+        <p><strong>{{ product.subtitle }}</strong></p>
+        {{ product.description|markdown }}
+      </div>
+      <div class="large-2 columns">
+        <a href="{{ product.get_absolute_url }}" class="medium primary button expand buy-now">
+          Buy now!<br>
+          <span class="price">{{ product.amount }}&nbsp;{{ product.currency }}</span>
+        </a>
+      </div>
+    </div>
+  {% empty %}
+    <strong>Oops, no products yet.</strong>
+  {% endfor %}
+
+{% endblock %}

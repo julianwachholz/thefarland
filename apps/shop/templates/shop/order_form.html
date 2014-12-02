@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load formulation %}
+
+{% block content %}
+
+  <h2>Product Detail
+    <small><a href="{% url 'shop:list' %}">Shop</a></small>
+  </h2>
+
+  {% form 'forms/foundation.html' form %}
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="row">
+      <div class="small-3 columns">
+        <label class="right">Product</label>
+      </div>
+      <div class="small-9 columns">
+        <p><strong>{{ product }}</strong></p>
+        <p>{{ product.subtitle }}</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="small-3 columns">
+        <label class="right">Price</label>
+      </div>
+      <div class="small-9 columns">
+        <p><strong>{{ product.amount }}&nbsp;{{ product.currency }}</strong></p>
+      </div>
+    </div>
+
+    {% field form.notes placeholder='Please supply any notes on this order here.' %}
+
+    {% use 'Submit' label='Submit order!' %}
+  </form>
+  {% endform %}
+
+{% endblock %}

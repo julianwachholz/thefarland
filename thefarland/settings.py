@@ -28,7 +28,7 @@ def get_env_setting(setting, default=None):
     raise ImproperlyConfigured(error_msg)
 
 
-DEBUG = get_env_setting('DEBUG', False)
+DEBUG = bool(get_env_setting('DEBUG', False))
 TEMPLATE_DEBUG = DEBUG
 
 SECRET_KEY = get_env_setting('SECRET_KEY', 'dummy' if DEBUG else None)
@@ -59,10 +59,12 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'paypal.standard.ipn',
     'formulation',
     'markdown_deux',
     'pure_pagination',
     'apps.accounts',
+    'apps.shop',
     'apps.minecraft',
     'apps.boards',
 )
@@ -161,6 +163,11 @@ STATICFILES_DIRS = (
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+# Paypal
+PAYPAL_TEST = DEBUG
+PAYPAL_RECEIVER_EMAIL = "donations@thefar.land"
 
 
 # Celery configuration
