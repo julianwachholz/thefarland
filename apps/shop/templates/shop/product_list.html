@@ -10,7 +10,12 @@
   {% for product in products %}
     <div class="row list product" id="product-{{ product.id }}">
       <div class="large-10 columns">
-        <h3>{{ product }}</h3>
+        <h3>
+          {{ product }}
+          {% if product.instant_delivery %}
+            <small><i class="fa fa-certificate"></i> Instant delivery</small>
+          {% endif %}
+        </h3>
         <p><strong>{{ product.subtitle }}</strong></p>
         {{ product.description|markdown }}
       </div>
