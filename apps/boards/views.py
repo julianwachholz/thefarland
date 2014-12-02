@@ -29,7 +29,8 @@ class ThreadView(object):
 
     @cached_property
     def board(self):
-        return get_object_or_404(Board, slug=self.kwargs['board'])
+        qs = Board.objects.get_visible_for_user(self.request.user)
+        return get_object_or_404(qs, slug=self.kwargs['board'])
 
     def get_context_data(self, **kwargs):
         kwargs.update({
@@ -81,7 +82,9 @@ class PostView(object):
 
     @cached_property
     def thread(self):
-        return get_object_or_404(Thread, slug=self.kwargs['thread'])
+        boards = Board.objects.get_visible_for_user(self.request.user)
+        qs = Thread.objects.filter(board__in=boards)
+        return get_object_or_404(qs, slug=self.kwargs['thread'])
 
     def get_context_data(self, **kwargs):
         kwargs.update({
