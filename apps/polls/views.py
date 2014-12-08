@@ -1,6 +1,7 @@
 from vanilla import ListView, CreateView, DetailView
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 from utils.views import UserFormKwargsMixin
+from apps.accounts.models import user_is_verified
 from .models import Poll, Vote
 from .forms import VoteForm
 
@@ -29,4 +30,4 @@ class VoteCreateView(UserFormKwargsMixin, CreateView):
     model = Vote
     form_class = VoteForm
 
-poll_vote = login_required(VoteCreateView.as_view())
+poll_vote = user_passes_test(user_is_verified)(VoteCreateView.as_view())

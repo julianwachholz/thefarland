@@ -3,11 +3,10 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from apps.minecraft.commands import team_add_registered
 from utils.forms import KwargsPopMixin
-
+from .models import AUTH_VERIFIED_GROUP
 
 User = get_user_model()
 
-AUTH_VERIFIED_GROUP = "Minecraft Verified"
 
 
 class UserForm(forms.ModelForm):

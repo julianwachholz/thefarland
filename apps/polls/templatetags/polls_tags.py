@@ -18,4 +18,4 @@ def did_user_vote(poll, user):
 def vote_percentage(poll, choice):
     if choice.count == 0:
         return 0
-    return 100 * poll.votes.count() / choice.count
+    return 100 * choice.count / poll.votes.count()
