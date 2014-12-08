@@ -56,6 +56,8 @@ class Product(models.Model):
         return reverse('shop:product_order', kwargs={'pk': self.pk})
 
     def get_form_fields(self):
+        if not self.fields:
+            return []
         for field in self.fields:
             help_text = field.get('help_text', '')
             if field['field_type'] in ('alpha', 'email'):
