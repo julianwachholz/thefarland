@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load markdown_deux_tags polls_tags %}
+
+{% block content %}
+
+  <h2>{{ poll }}</h2>
+
+  {{ poll.description|markdown }}
+
+  {% if not poll|did_user_vote:user %}
+  <form method="post" action="{% url 'polls:vote' %}">
+    {% csrf_token %}
+    <input type="hidden" name="poll" value="{{ poll.pk }}">
+    {% for choice in poll.choices.all %}
+      <button class="secondary" type="submit" name="choice" value="{{ choice.pk }}">
+        {{ choice }}
+      </button>
+    {% endfor %}
+    </ul>
+  </form>
+  {% endif %}
+
+  {% for choice in poll.get_vote_bars %}
+    {{ choice }}: {{ choice.count }} ({{ poll|vote_percentage:choice|floatformat }}%)
+    <div class="radius progress success">
+      <span class="meter" style="width: {{ poll|vote_percentage:choice }}%"></span>
+    </div>
+  {% endfor %}
+
+  <dl>
+    <dt>Poll start</dt>
+    <dd>{{ poll.start|date:'j. M Y, H:i (T)' }}</dd>
+    <dt>Poll end</dt>
+    <dd>{{ poll.end|date:'j. M Y, H:i (T)' }}</dd>
+    <dt>Votes cast</dt>
+    <dd>{{ poll.votes.count }}</dd>
+  </dl>
+
+{% endblock %}

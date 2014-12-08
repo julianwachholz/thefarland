@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load markdown_deux_tags polls_tags %}
+
+{% block content %}
+
+  <h2>Polls</h2>
+
+  <p>Have a vote in our currently active polls.</p>
+
+  {% for poll in polls %}
+    <div class="row list product" id="poll-{{ poll.id }}">
+      <div class="large-12 columns">
+        <h3>{{ poll }}</h3>
+        {{ poll.description|markdown }}
+
+        {% if not poll|did_user_vote:user %}
+        <form method="post" action="{% url 'polls:vote' %}">
+          {% csrf_token %}
+          <input type="hidden" name="poll" value="{{ poll.pk }}">
+          {% for choice in poll.choices.all %}
+            <button class="secondary" type="submit" name="choice" value="{{ choice.pk }}">
+              {{ choice }}
+            </button>
+          {% endfor %}
+          </ul>
+        </form>
+        {% endif %}
+        <a href="{{ poll.get_absolute_url }}">View results</a>
+      </div>
+    </div>
+  {% empty %}
+    <strong>No polls active right now.</strong>
+  {% endfor %}
+
+{% endblock %}

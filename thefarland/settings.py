@@ -67,6 +67,7 @@ INSTALLED_APPS = (
     'apps.shop',
     'apps.minecraft',
     'apps.boards',
+    'apps.polls',
 )
 
 AUTH_USER_MODEL = 'accounts.User'
