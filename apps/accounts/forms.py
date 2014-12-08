@@ -8,7 +8,6 @@ from .models import AUTH_VERIFIED_GROUP
 User = get_user_model()
 
 
-
 class UserForm(forms.ModelForm):
     """
     User form.

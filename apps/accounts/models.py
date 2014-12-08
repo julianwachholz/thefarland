@@ -6,7 +6,7 @@ AUTH_VERIFIED_GROUP = "Minecraft Verified"
 
 
 def user_is_verified(user):
-    user.groups.filter(name=AUTH_VERIFIED_GROUP).exists()
+    return user.groups.filter(name=AUTH_VERIFIED_GROUP).exists()
 
 
 class UserManager(BaseUserManager):
