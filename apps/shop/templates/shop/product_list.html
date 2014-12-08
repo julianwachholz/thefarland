@@ -22,7 +22,10 @@
       <div class="large-2 columns">
         <a href="{{ product.get_absolute_url }}" class="medium primary button expand buy-now">
           Buy now!<br>
-          <span class="price">{{ product.amount }}&nbsp;{{ product.currency }}</span>
+          <span class="price">
+            {{ product.amount }}&nbsp;{{ product.currency }}
+            {% if product.monthly %}/ month{% endif %}
+          </span>
         </a>
       </div>
     </div>

@@ -15,6 +15,9 @@ class ProductListView(ListView):
     model = Product
     context_object_name = 'products'
 
+    def get_queryset(self):
+        return self.model.active.all()
+
 product_list = ProductListView.as_view()
 
 
@@ -62,6 +65,36 @@ class OrderDetailView(OrderMixin, DetailView):
             return 'https://thefarland.ngrok.com'
         return 'https://thefar.land'
 
+    def get_form(self):
+        from paypal.standard.forms import PayPalPaymentsForm
+        initial = {
+            'business': settings.PAYPAL_RECEIVER_EMAIL,
+            'currency_code': self.object.product.currency,
+            'item_name': self.object.product.name,
+            'invoice': 'THEFARLAND-' + str(self.object.pk),
+            'notify_url': self.get_notify_host() + reverse('paypal-ipn'),
+            'return_url': (self.get_notify_host() +
+                           reverse('shop:order_detail', kwargs={'pk': self.object.pk}) + '?from_paypal=true'),
+            'cancel_return': self.get_notify_host() + reverse('shop:order_detail', kwargs={'pk': self.object.pk}),
+        }
+        if self.object.product.monthly:
+            button = 'subscribe'
+            initial.update({
+                'cmd': '_xclick-subscriptions',
+                'a3': self.object.product.amount,
+                'p3': 1,
+                't3': 'M',
+                'src': '1',
+                'sra': '1',
+                'no_note': '1',
+            })
+        else:
+            button = 'buy'
+            initial.update({
+                'amount': self.object.product.amount,
+            })
+        return PayPalPaymentsForm(initial=initial, button_type=button)
+
     def get_context_data(self, **kwargs):
         from_paypal = self.request.GET.get('from_paypal', False)
         if from_paypal:
@@ -69,21 +102,8 @@ class OrderDetailView(OrderMixin, DetailView):
                 'check_ipn': True,
             })
         elif self.object.needs_payment():
-            from paypal.standard.forms import PayPalPaymentsForm
-            form = PayPalPaymentsForm(initial={
-                "business": settings.PAYPAL_RECEIVER_EMAIL,
-                "amount": self.object.product.amount,
-                "currency_code": self.object.product.currency,
-                "item_name": self.object.product.name,
-                "invoice": 'THEFARLAND-' + str(self.object.pk),
-                "notify_url": self.get_notify_host() + reverse('paypal-ipn'),
-                "return_url": (self.get_notify_host() +
-                               reverse('shop:order_detail', kwargs={'pk': self.object.pk}) +
-                               '?from_paypal=true'),
-                "cancel_return": self.get_notify_host() + reverse('shop:order_detail', kwargs={'pk': self.object.pk}),
-            })
             kwargs.update({
-                'form': form,
+                'form': self.get_form(),
             })
         return super(OrderDetailView, self).get_context_data(**kwargs)
 
@@ -101,11 +121,7 @@ def order_redeem(request, pk):
             'error': 'Cannot redeem this order.',
         })
 
-    from apps.minecraft.tasks import minecraft_cmd
-    command = order.product.delivery_command.format(user=order.user.username)
-    minecraft_cmd.delay(command)
-
-    order.redeemed = True
+    order.deliver()
     order.save()
 
     return JsonResponse({

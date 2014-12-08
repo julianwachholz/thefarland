@@ -30,6 +30,10 @@
       </div>
     </div>
 
+    {% for extra_field in form.extra_fields %}
+      {% field extra_field help_placeholder=True %}
+    {% endfor %}
+
     {% field form.notes placeholder='Please supply any notes on this order here.' %}
 
     {% use 'Submit' label='Submit order!' %}

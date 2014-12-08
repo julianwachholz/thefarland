@@ -33,12 +33,13 @@
         class="{{ css_classes }}{{ errors|yesno:' error,' }}"
         {{ widget.attrs|flat_attrs }}
         {{ required|yesno:'required,' }}
-        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}>
+        {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+        {% if help_placeholder %}placeholder="{{ help_text }}"{% endif %}>
 
       {% for error in errors %}
         <span class="error">{{ error }}</span>
       {% endfor %}
-      {% if help_text %}
+      {% if help_text and not help_placeholder %}
         <span class="help">{{ help_text|safe }}</span>
       {% endif %}
     </div>
