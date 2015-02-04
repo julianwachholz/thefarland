@@ -34,3 +34,8 @@ You can roughly follow these simple commands to get a running application::
 
 Of course, you'd want to setup a proper development environment.
 Refer to the complete :doc:`docs/install` in this case.
+
+License
+=======
+
+This project is released under the WTFPL. See the LICENSE file for details.
